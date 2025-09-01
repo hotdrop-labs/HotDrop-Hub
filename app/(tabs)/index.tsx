@@ -16,9 +16,6 @@ export default function Index() {
 
   return (
     <View className={'flex-1 flex bg-bgDark'}>
-      {!token ? <View className={"flex items-center justify-center border-b border-gray-500"}>
-          <Link className={"bg-yellow-600 rounded-full w-2/5 text-center color-white text-2xl mt-3 mb-3"} href={'/(auth)/login'}>Login</Link>
-      </View> : <></>}
         <View className={"flex flex-row items-center justify-center border-b border-gray-500"}>
             <Image className={"size-16"} source={require('../../assets/images/icon.png')} />
             <Text className={"color-white text-2xl"}>HotDrop</Text>

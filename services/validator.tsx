@@ -1,6 +1,4 @@
 
-import { Filter } from 'bad-words'
-const filter = new Filter();
 
 export const isValidEmail = (email: string): boolean => {
     if(email=="") return true
@@ -85,7 +83,6 @@ export const isValidUsername = (username: string): UsernameValidator => {
     ];
 
     if(username.length < 4) errors.push("Username must be at least 4 characters long")
-    if(filter.isProfane(username)) errors.push("Username not allowed")
     if(bannedPatterns.some((pattern) => pattern.test(username))) errors.push("Username not allowed")
 
     return {

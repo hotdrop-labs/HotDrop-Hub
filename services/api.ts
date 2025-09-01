@@ -34,7 +34,20 @@ export const fetchUser = async ({query, id}:{query:string, id:string}) => {
     }
     return await response.json();
 }
+export const fetchUserByPubgId = async ({query, id}:{query:string, id:string}) => {
 
+    const response = await fetch(`${BASE_URL}${query}?id=${id}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    if(!response.ok){
+        throw new Error("Failed to fetch user")
+    }
+    return await response.json();
+}
 type userDataTypes = {
     email: string,
     username: string,
@@ -86,11 +99,11 @@ export type scrimDataTypes = {
     cost: string,
     prizePool: string,
     status: string,
-    registrations: [{
+    registrations: {
         _id: string,
         teamId: string,
         slotNumber: string
-    }]
+    }[]
 }
 
 export const createScrim = async (query: string, scrimData: scrimDataTypes) => {
@@ -171,4 +184,21 @@ export const editScrim = async ({_id, teamId}:slotType) => {
         return err
     }
     
+}
+export const editSquadAPI = async ({teamId, _id}:{teamId: string, _id: string | undefined}) => {
+    try{
+        if(teamId && _id){
+            console.log("calling api with: ", teamId, _id)
+            const res = await fetch(`${BASE_URL}squads/editSquad`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({teamId, _id})
+            })
+            return await res.json()
+        }
+    }catch(err){
+        return err
+    }
 }

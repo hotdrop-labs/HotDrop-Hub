@@ -1,18 +1,23 @@
-import { fetchScrims } from "@/services/api";
-import { useCallback} from "react";
+import { fetchScrims, scrimDataTypes } from "@/services/api";
+import { useCallback, useEffect, useMemo, useState} from "react";
 import {View, Text, FlatList, ActivityIndicator, Pressable} from "react-native";
 import useFetch from "@/services/useFetch";
 import ScrimCard from "@/components/ScrimCard";
 import { useAuth } from "@/services/stores/useAuth";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function Scrims(){
-    const {data: scrims, loading, error} = useFetch(() => fetchScrims({query: "scrims/getAll"}))
+    const {data: scrimsRes, loading, error} = useFetch(() => fetchScrims({query: "scrims/getAll"}))
     const renderItem = useCallback(({item}:{item: any}) => {
         return <ScrimCard {...item} />;
     }, [])
-    const token = useAuth(s => s.token)
-    
+    const [scrims, setScrims] = useState()
+    useEffect(() => {
+        if(scrimsRes){
+            setScrims(scrimsRes)
+        }
+
+    }, [scrimsRes])
     const createButton = () => {
         router.replace("/scrim")
     }

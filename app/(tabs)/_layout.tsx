@@ -3,6 +3,8 @@ import {Tabs, Redirect} from 'expo-router';
 import {View, Text, Image} from "react-native";
 import { useAuth } from "@/services/stores/useAuth";
 import LoadingScreen from "@/components/LoadingScreen";
+import { useState, useEffect } from "react";
+import * as SecureStore from 'expo-secure-store';
 
 
 const TabIcon = ({focused, icon}:any) => {
@@ -30,8 +32,58 @@ const TabIcon = ({focused, icon}:any) => {
 
 const _Layout = () => {
     const token = useAuth((s) => s.token);
-    const hydrated = useAuth.persist?.hasHydrated?.()
-    if(!hydrated) return <LoadingScreen />
+    const [isReady, setIsReady] = useState(false);
+
+    useEffect(() => {
+        let mounted = true;
+
+        const initAuth = async () => {
+            try {
+                // Verificar directamente si hay datos en SecureStore
+                const storedData = await SecureStore.getItemAsync('hotdrop-auth');
+                console.log('Direct SecureStore check:', !!storedData);
+
+                // Esperar un poco más para SecureStore
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Verificar si Zustand ya se hidrato
+                const maxAttempts = 10;
+                for (let i = 0; i < maxAttempts; i++) {
+                    if (useAuth.persist.hasHydrated()) {
+                        console.log(`Hydrated after ${i + 1} attempts`);
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                if (mounted) {
+                    setIsReady(true);
+                }
+            } catch (error) {
+                console.error('Auth initialization error:', error);
+                if (mounted) {
+                    setIsReady(true); // Continuar de todos modos
+                }
+            }
+        };
+
+        initAuth();
+
+        // Timeout de seguridad más largo para SecureStore
+        const timeout = setTimeout(() => {
+            console.log('Auth timeout reached');
+            if (mounted) {
+                setIsReady(true);
+            }
+        }, 5000); // 5 segundos para SecureStore
+
+        return () => {
+            mounted = false;
+            clearTimeout(timeout);
+        };
+    }, []);
+
+    if (!isReady) return <LoadingScreen />;
     return token ? (
         <Tabs
             screenOptions={{
@@ -39,7 +91,7 @@ const _Layout = () => {
                     backgroundColor: "#0e0e0e",
                     borderRadius: 50,
                     marginHorizontal: 20,
-                    marginBottom:36,
+                    marginBottom:50,
                     height: 52,
                     position: "absolute",
                     overflow: "hidden",

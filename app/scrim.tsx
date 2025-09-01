@@ -1,17 +1,15 @@
 import { useAuth } from "@/services/stores/useAuth";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {View, Text, Image, Pressable, TextInput} from 'react-native'
+import {View, Text,Pressable, TextInput} from 'react-native'
 import {isValidDate, validateTime, maxTeamsValidator} from '@/services/validator'
 import { createScrim } from "@/services/api";
-import useFetch from "@/services/useFetch";
-
+import { scrimDataTypes } from "@/services/api";
 
 export default function Scrim(){
     const [title, setTitle] = useState("")
     const [date, setDate] = useState("")
     const [startTime, setStartTime] = useState("")
-    const [checkInTime, setCheckInTime] = useState("")
     const [maxTeams, setMaxTeams] = useState("25")
     const [map, setMap] = useState("Erangel")
     const [mode, setMode] = useState("TPP")
@@ -26,31 +24,41 @@ export default function Scrim(){
     const errors: string[] = []
     const [error, setError] = useState("")
     const [ready, setReady ] = useState(false)
+    const registrations: any[] = []
+
     
 
 
     const goBack = () => {
-        router.replace("/(tabs)/scrims")
+        router.push({
+            pathname: "/(tabs)/scrims"
+        })
     }
     const handleCreate = async () => {
         if(ready && user !== null){
-            const hostId = user?._id
-            const scrim = {
-                title,
-                hostId,
-                date, 
-                startTime,
-                maxTeams,
-                map,
-                mode,
-                teamSize,
-                applications,
-                cost,
-                prizePool,
-                status,
+            const hostId = user?.id
+            if(hostId){
+                const scrim = {
+                    title,
+                    hostId,
+                    date, 
+                    startTime,
+                    maxTeams,
+                    map,
+                    mode,
+                    teamSize,
+                    applications,
+                    cost,
+                    prizePool,
+                    status,
+                    registrations
+                    }
+                const data = await createScrim("scrims/create", scrim)
+                goBack()
+            }else{
+                console.log(hostId)
             }
-            const data = await createScrim("scrims/create", scrim)
-            goBack()
+            
         }
     }
 

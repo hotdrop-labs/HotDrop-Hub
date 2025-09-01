@@ -4,16 +4,42 @@ import * as SecureStore from 'expo-secure-store';
 
 
 const secureStorage = {
-    getItem: async(name:string) => (await SecureStore.getItemAsync(name)) ?? null,
-    setItem: async(name: string, value: string) => {await SecureStore.setItemAsync(name, value)},
-    removeItem: async(name: string) => {await SecureStore.deleteItemAsync(name)}
-}
+    getItem: async (name: string) => {
+        try {
+            const result = await SecureStore.getItemAsync(name);
+            console.log(`SecureStore getItem ${name}:`, !!result);
+            return result ?? null;
+        } catch (error) {
+            console.error(`SecureStore getItem error for ${name}:`, error);
+            return null;
+        }
+    },
+    setItem: async (name: string, value: string) => {
+        try {
+            await SecureStore.setItemAsync(name, value);
+            console.log(`SecureStore setItem ${name}: success`);
+        } catch (error) {
+            console.error(`SecureStore setItem error for ${name}:`, error);
+            throw error;
+        }
+    },
+    removeItem: async (name: string) => {
+        try {
+            await SecureStore.deleteItemAsync(name);
+            console.log(`SecureStore removeItem ${name}: success`);
+        } catch (error) {
+            console.error(`SecureStore removeItem error for ${name}:`, error);
+            throw error;
+        }
+    }
+};
 
 type User = {
     id: string,
     username: string,
     email: string,
     avatarUrl: string,
+    wallet: number
 
     pubgId: string,
     pubgRegion: string,
@@ -41,8 +67,22 @@ export const useAuth = create<AuthState>()(
         {
             name: 'hotdrop-auth',
             storage: createJSONStorage(() => secureStorage),
-            partialize: (s) => ({user: s.user, token: s.token})
+            partialize: (s) => ({user: s.user, token: s.token}),
+            onRehydrateStorage: () => {
+                console.log('Starting auth rehydration...');
+                return (state, error) => {
+                    if (error) {
+                        console.error('Auth rehydration failed:', error);
+                    } else {
+                        console.log('Auth rehydration complete:', {
+                            hasUser: !!state?.user,
+                            hasToken: !!state?.token
+                        });
+                    }
+                };
+            },
+            // Versión para manejar migraciones si es necesario
+            version: 1,
         }
     )
-
 );

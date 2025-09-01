@@ -1,9 +1,8 @@
 import {View, Text, TextInput, Pressable} from 'react-native';
 import Checkbox from 'expo-checkbox'
-import {Link} from 'expo-router'
-import { useState, useEffect } from 'react';
+import {Link, Redirect} from 'expo-router'
+import { useState, useEffect, use } from 'react';
 import SubmitButton from './SubmitButton';
-import { router } from "expo-router";
 import { loginRequest } from "@/services/auth";
 import { useAuth} from '@/services/stores/useAuth';
 import { isValidEmail} from '@/services/validator';
@@ -16,13 +15,14 @@ export default function LoginCard(){
     const baseUrl = 'http://192.168.1.65:3000/api/'
     const [showPassword, setShowPassword] = useState(false)
     const [ValidatorString, setValidatorString] = useState("")
+    const [redirect, setRedirect] = useState(false)
 
     const handleLogin = async () => {
             try{
                 if(email=="" || password==""){setValidatorString("All fields are required");return}
                 const {token, user} = await loginRequest(baseUrl, {email, password});
                 useAuth.getState().setAuth({user: user, token: token})
-                router.replace("/(tabs)")
+                setRedirect(true)
             }catch(e: unknown){
                 if(e instanceof Error){
                     if(e.message == "USER_NOT_FOUND") setValidatorString("Invalid Credentials")
@@ -35,8 +35,10 @@ export default function LoginCard(){
     useEffect(() => {
         isValidEmail(email) ? setValidatorString("") : setValidatorString("Incorrect email")
     }, [email])
-
-    return (
+    if(redirect){ 
+        return <Redirect href={'/(tabs)'} />
+    }else{
+        return (
         <View className='flex justify-center w-11/12 bg-bgDarkLight h-fit rounded-[15] pb-7 mt-8 border border-gray-700'>
             <View className='flex w-11/12 m-auto items-center mt-2'>
                 {ValidatorString ? <Text className='text-md color-red-400'>{ValidatorString}</Text>:<Text> </Text>}
@@ -81,5 +83,7 @@ export default function LoginCard(){
                 opacity={ValidatorString !== "" ? true : false}
                 />
         </View>
-    )
+        )
+    }
 }
+    

@@ -5,11 +5,20 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "scheme": "hotdrop",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hotdroplabs.hotdrop"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.giancarlos07.frontend"
+      "package": "com.hotdroplabs.hotdrop"
     },
     "web": {
       "bundler": "metro",
@@ -25,16 +34,9 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
+      "expo-dev-client",
       "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
