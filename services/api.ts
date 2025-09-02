@@ -1,14 +1,11 @@
-
-const BASE_URL = 'http://192.168.1.65:3000/api/'
-
+import Constants from 'expo-constants'
+const BASE_URL = Constants.expoConfig?.extra?.backend_url
 export const fetchPosts = async ({query}:{query:string}) => {
-
 
     const response = await fetch(`${BASE_URL}${query}`,{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
         }
     })
 
@@ -26,7 +23,6 @@ export const fetchUser = async ({query, id}:{query:string, id:string}) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
         }
     })
     if(!response.ok){
@@ -40,7 +36,6 @@ export const fetchUserByPubgId = async ({query, id}:{query:string, id:string}) =
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
         }
     })
     if(!response.ok){
@@ -73,6 +68,7 @@ export const createUser = async (query: string, userData: userDataTypes) => {
     
 }
 export const fetchScrims = async ({query}:{query:string}) => {
+    console.log(`${BASE_URL}${query}`)
     const response = await fetch(`${BASE_URL}${query}`,{
         method: 'GET',
         headers: {

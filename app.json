@@ -45,7 +45,8 @@
       "router": {},
       "eas": {
         "projectId": "dd28b193-b441-4913-a7dc-7a71fe6753fa"
-      }
+      },
+      "backend_url": "http://192.168.1.65:3000/api/"
     }
   }
 }

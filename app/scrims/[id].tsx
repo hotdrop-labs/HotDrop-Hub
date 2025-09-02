@@ -83,7 +83,7 @@ export default function ScrimPage() {
                     <TeamMembers memberIds={tempSquad.members} />
                 </View>
                 :
-                <Text className="color-slate-100">Loading...</Text>
+                <></>
                 }
                 
             </View>

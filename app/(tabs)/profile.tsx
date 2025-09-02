@@ -96,7 +96,7 @@ export default function Profile (){
             );
         }, [squadUsers])
     const createSquad = async () => {
-        const id = user ? user._id : "NOT_FOUND"
+        const id = user ? user.id : "NOT_FOUND"
         const res =  await createSquadAPI({query:'squads/create', _id: id, name: (squadName ?? `Team${String(Math.floor(Math.random() * 10_000_000) + 1)}`)})
         if(res) setSquad(res)
         setModalVisible(false)
